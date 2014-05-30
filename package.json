@@ -21,6 +21,7 @@
         "editor", "messaging", "iot", "m2m", "pi", "arduino", "beaglebone", "ibm", "flow"
     ],
     "dependencies": {
+        "upyun": "0.0.3",
         "express": "3.x",
         "when": "3.1.0",
         "nopt": "2.2.0",
