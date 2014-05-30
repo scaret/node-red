@@ -16,12 +16,18 @@
 
 module.exports = function(RED) {
     "use strict";
-    var fs = require("fs");
+    var upyun = require("upyun");
 
     function UpyunNode(n) {
         RED.nodes.createNode(this,n);
 
         this.filename = n.filename;
+        this.username = n.username;
+        this.password = n.password;
+        this.bucket = n.bucket;
+
+
+
         this.format = n.format;
         var node = this;
         var options = {};
@@ -29,16 +35,43 @@ module.exports = function(RED) {
             options['encoding'] = this.format;
         }
         this.on("input",function(msg) {
-            var filename = msg.filename || this.filename;
+            var filename = msg.filename || this.filename || msg.topic;
+            var username = this.username;
+            var password  = this.password;
+            var bucket = this.bucket;
 
-            if (filename == "") {
+            if (!filename) {
                 node.warn('No filename specified');
-            } else {
-                fs.readFile(filename,options,function(err,data) {
-                    if (err) {
+            } else if (!username){
+                node.warn("No username specified");
+            }else if (!password){
+                node.warn("No password specified");
+            }else if (!bucket){
+                node.warn("No bucket specified");
+            }else {
+                var client = upyun(bucket, username, password );
+
+                if (msg.payload instanceof Buffer || msg.payload instanceof String)
+                {
+                    var payload = msg.payload;
+                }
+                else if (msg.payload instanceof Object)
+                {
+                    var payload = JSON.stringify(msg.payload);
+                }
+                else
+                {
+                    var payload = msg.payload.toString();
+                }
+
+                client.uploadFile(filename, payload, function(err, status, data){
+                    if (err)
+                    {
                         node.warn(err);
-                    } else {
-                        msg.payload = data;
+                    }
+                    else
+                    {
+                        msg.status = status;
                         node.send(msg);
                     }
                 });

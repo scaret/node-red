@@ -16,21 +16,31 @@
 
 <script type="text/x-red" data-template-name="upyun">
     <div class="form-row">
-         <label for="node-input-filename"><i class="icon-file"></i> Filename</label>
-         <input type="text" id="node-input-filename" placeholder="Filename">
+         <label for="node-input-bucket"> <b>空间名</b></label>
+         <input type="text" id="node-input-bucket" placeholder="例：mybucket">
     </div>
     <div class="form-row">
-        <label>Output as</label>
-        <select id="node-input-format">
-            <option value="utf8">a utf8 string</option>
-            <option value="">a Buffer</option>
-        </select>
+         <label for="node-input-username"> <b>用户名</b></label>
+         <input type="text" id="node-input-username" placeholder="例：scaret">
+    </div>
+
+    <div class="form-row">
+         <label for="node-input-password"> <b>密码</b></label>
+         <input type="password" id="node-input-password" placeholder="">
+    </div>
+    <div class="form-row">
+         <label for="node-input-filename"> 上传路径</label>
+         <input type="text" id="node-input-filename" placeholder="例：/upload/scaret/message.json">
     </div>
 </script>
 
 <script type="text/x-red" data-help-name="upyun">
-    <p>Reads the specified file and sends the content as <b>msg.payload</b>.</p>
-    <p>The filename can be overridden by the <code>filename</code> property of the incoming message.</p>
+    <p>将<b>msg.payload</b>上传到又拍云服务器</p>
+    <ul>
+    <li>如果有topic，则上传路径为topic</li>
+    <li>如果手动设置了上传路径，则覆盖上条</li>
+    <li>如果msg有<code>filename</code>属性，则覆盖上两条</li>
+    </ul>
 </script>
 
 <script type="text/javascript">
@@ -39,6 +49,9 @@
         category: 'storage-input',
         defaults: {
             name: {value:""},
+            bucket: {value:""},
+            username: {value:""},
+            password: {value:""},
             filename: {value:""},
             format: {value:"utf8"},
         },
@@ -47,7 +60,7 @@
         outputs:1,
         icon: "file.png",
         label: function() {
-            return this.name||this.filename;
+            return this.name||this.filename || this.username + (this.bucket ? "@" + this.bucket : "");
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
