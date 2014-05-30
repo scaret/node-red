@@ -16,6 +16,10 @@
 
 <script type="text/x-red" data-template-name="upyun">
     <div class="form-row">
+         <label for="node-input-domainName"> <b>域名</b></label>
+         <input type="text" id="node-input-domainName" placeholder="例：scaret.b0.upaiyun.com">
+    </div>
+    <div class="form-row">
          <label for="node-input-bucket"> <b>空间名</b></label>
          <input type="text" id="node-input-bucket" placeholder="例：mybucket">
     </div>
@@ -49,6 +53,7 @@
         category: 'storage-input',
         defaults: {
             name: {value:""},
+            domainName: {value:""},
             bucket: {value:""},
             username: {value:""},
             password: {value:""},

@@ -25,7 +25,7 @@ module.exports = function(RED) {
         this.username = n.username;
         this.password = n.password;
         this.bucket = n.bucket;
-
+        this.domainName = n.domainName;
 
 
         this.format = n.format;
@@ -36,9 +36,14 @@ module.exports = function(RED) {
         }
         this.on("input",function(msg) {
             var filename = msg.filename || this.filename || msg.topic;
+            if (filename && filename[0] != "/"){
+                filename = '/' + filename;
+            }
+
             var username = this.username;
             var password  = this.password;
             var bucket = this.bucket;
+            var domainName = this.domainName;
 
             if (!filename) {
                 node.warn('No filename specified');
@@ -71,6 +76,7 @@ module.exports = function(RED) {
                     }
                     else
                     {
+                        msg.url = "http://" + domainName + filename;
                         msg.status = status;
                         node.send(msg);
                     }
